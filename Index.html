@@ -34,7 +34,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('images/hero.jpg'); /*WHAT IS HERO? */
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)); /*WHAT IS HERO? */
             background-size: cover;
             background-position: center;
             border-bottom: 2px solid var(--gold);
@@ -117,17 +117,17 @@
         }
 
 
-        .floating-ig {
+       /* .floating-ig {
     position: fixed;
     bottom: 20px;
     right: 20px;
     width: 50px;
     height: 50px;
     z-index: 1000; /* Keeps it above everything else */
-    transition: transform 0.3s ease;
-}
+    /*transition: transform 0.3s ease;
+/*}*/
 
-.floating-ig img {
+/*.floating-ig img {
     width: 100%;
     height: auto;
     border-radius: 12px;
@@ -137,6 +137,135 @@
 .floating-ig:hover {
     transform: scale(1.1);
 }
+
+.social-float-wrap {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: row; /* Stacks them vertically */
+    /*gap: 15px;
+    z-index: 9999;
+}
+
+.floating-social {
+    width:55px;
+    height: 55px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-social img {
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+
+.floating-social:hover {
+    transform: scale(1.15) translateY(-5px);
+}
+
+
+.wa img {
+    background: #25D366;
+    /*padding: 10px;
+    box-sizing: border-box;*/
+
+   /* width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+
+.whatsapp-text {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.whatsapp-text a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.whatsapp-text a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .floating-social { width: 45px; height: 45px; }
+    .social-float-wrap { bottom: 20px; right: 20px; gap: 10px; }
+}*/
+
+
+.social-float-wrap {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: row; /* Stack them vertically so they don't overlap */
+    gap: 12px;
+    z-index: 9999;
+}
+
+/* Base style for both icons */
+.floating-ig, .floating-social {
+    position: static; /* Remove the fixed positioning from individual links */
+    width: 50px;
+    height: 50px;
+    transition: transform 0.3s ease;
+    display: block;
+}
+
+.floating-ig img, .floating-social img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+/* Specific background for WhatsApp to match IG's size/vibe */
+.wa img {
+    background: #25D366;
+    padding: 8px; /* Breathing room for the WA logo */
+    box-sizing: border-box;
+}
+
+.floating-ig:hover, .floating-social:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    .social-float-wrap { bottom: 20px; right: 20px; }
+    .floating-ig, .floating-social { width: 45px; height: 45px; }
+}
+
+
+.whatsapp-text {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.whatsapp-text a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.whatsapp-text a:hover {
+    text-decoration: underline;
+}
+
+
+
+
     </style>
 </head>
 <body>
@@ -203,10 +332,20 @@
         </div>
     </div>
 </section>
-
+<div class = "social-float-wrap"> 
 <a href="https://instagram.com/sidedoorsbos" class="floating-ig" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
 </a>
+
+
+<a href="http://chat.whatsapp.com/ElPFMI1SiWhKzZrTj9t1Cj?mode=gi_t" class="floating-social wa" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Side Doors">
+    </a>
+
+ </div>
+
+
+    
 
 
 
@@ -228,6 +367,14 @@
             <button type="submit" class="submit-btn">Submit Guest List</button>
         </form>
     </section>
+
+
+
+
+
+    <p class="whatsapp-text">
+    Prefer to chat? <a href="http://chat.whatsapp.com/ElPFMI1SiWhKzZrTj9t1Cj?mode=gi_t" target="_blank">Join our WhatsApp Group</a>
+</p>
 
 </body>
 </html>
