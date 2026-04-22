@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Headliners | Boston</title>
+    <style>
+        :root { --gold: #d4af37; --red: #ff3e3e; --dark: #050505; }
+        body { background: var(--dark); color: #fff; font-family: sans-serif; margin: 0; text-align: center; }
+        nav { padding: 20px; text-align: left; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo { max-height: 50px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; padding: 30px; max-width: 500px; margin: 0 auto; }
+        .card { background: #111; border-radius: 15px; overflow: hidden; border: 1px solid #222; display: flex; flex-direction: column; transition: 0.3s; }
+        .img { height: 400px; background-size: cover; background-position: center; }
+        .info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .tix-btn { background: var(--red); color: white; padding: 15px; text-decoration: none; font-weight: bold; border-radius: 5px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" style="color: var(--gold); text-decoration: none; font-weight: bold;">← BACK</a>
+        <img src="img/sidedoor.jpeg" alt="Logo" class="nav-logo">
+        <div style="width: 60px;"></div> </nav>
+
+    <h1 style="margin-top: 40px; letter-spacing: 3px;">SPECIAL EVENTS</h1>
+
+    <div id="event-grid" class="grid">
+        <p>Loading the latest announcements...</p>
+    </div>
+
+    <script>
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRcjUz5xeAVjrBvG0pSX1izxKli5GzdpJnONDNAF9WIvsuXdRGtsisU308KK-gZVujQWUahRbjGK3kU/pub?output=csv";
+
+        async function loadEvents() {
+            try {
+                // We add a timestamp to the URL to force Google to give us the latest data
+                const res = await fetch(CSV_URL + "&t=" + new Date().getTime());
+                const text = await res.text();
+                const rows = text.split(/\r?\n/).map(row => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+                const grid = document.getElementById('event-grid');
+
+                // Filter out empty rows or rows that only contain commas
+                const validRows = rows.filter(row => row[0] && row[0].trim() !== "" && row[0] !== "EventName");
+
+                if (validRows.length > 0) {
+                    grid.innerHTML = "";
+                    validRows.forEach(row => {
+                        const name = row[0]?.replace(/^"|"$/g, '').trim();
+                        const date = row[1]?.replace(/^"|"$/g, '').trim();
+                        const img = row[2]?.replace(/^"|"$/g, '').trim();
+                        const link = row[3]?.replace(/^"|"$/g, '').trim();
+
+                        grid.innerHTML += `
+                            <div class="card">
+                                <div class="img" style="background-image: url('${img}')"></div>
+                                <div class="info">
+                                    <div>
+                                        <h3 style="margin:0; font-size: 1.6rem;">${name}</h3>
+                                        <p style="color: var(--gold); margin: 10px 0 20px;">${date}</p>
+                                    </div>
+                                    <a href="${link}" class="tix-btn" target="_blank">Buy Tickets</a>
+                                </div>
+                            </div>`;
+                    });
+                } else {
+                    grid.innerHTML = "<p>No special events currently listed. Check back soon!</p>";
+                }
+            } catch (err) {
+                document.getElementById('event-grid').innerHTML = "<p>Error loading events. Please try again later.</p>";
+            }
+        }
+        loadEvents();
+    </script>
+</body>
+</html>

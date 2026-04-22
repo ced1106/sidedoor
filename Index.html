@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boston Nightlife | Guest List & Tickets</title>
+    <title>Boston Nightlife | Guest Lists</title>
     <style>
         :root {
             --gold: #d4af37;
-            --bnl-red: #ff3e3e; /* Big Night Live Brand Color */
+            --bnl-red: #ff3e3e;
             --dark-bg: #050505;
             --card-bg: #111;
-            --input-bg: #1a1a1a;
         }
 
         body {
@@ -21,54 +20,52 @@
             scroll-behavior: smooth;
         }
 
-        /* --- Header / Hero --- */
+
+        .main-logo {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+            
+        }
+
         header {
-            height: 50vh;
+            height: 40vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
-                        url('https://images.unsplash.com/photo-1514525253361-bee8718a74a2?auto=format&fit=crop&w=1500&q=80');
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('images/hero.jpg'); /*WHAT IS HERO? */
             background-size: cover;
             background-position: center;
             border-bottom: 2px solid var(--gold);
         }
 
-        header h1 { font-size: 3rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
-        header p { font-size: 1.1rem; color: var(--gold); margin-top: 10px; }
-
-        section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; }
-        h2 { text-align: center; font-size: 2.2rem; text-transform: uppercase; margin-bottom: 40px; letter-spacing: 2px; }
-
-        /* --- Featured Events (Spreadsheet) --- */
-        .event-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
-        .event-card {
-            display: flex;
-            width: 100%;
-            max-width: 850px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #333;
+        section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; text-align: center; }
+        
+        /* Navigation/Featured Button */
+        .top-nav { margin-bottom: 40px; }
+        .btn-events {
+            background: var(--bnl-red);
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 50px;
+            display: inline-block;
             transition: 0.3s;
         }
-        .event-card:hover { border-color: var(--bnl-red); }
-        .event-img { width: 300px; background-size: cover; background-position: center; min-height: 250px; }
-        .event-details { padding: 30px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .event-details h3 { margin: 0; font-size: 1.8rem; text-transform: uppercase; }
-        .event-details p { color: #aaa; margin: 10px 0; }
+        .btn-events:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 62, 62, 0.4); }
 
-        /* --- Venue Grid --- */
+        /* Venue Grid */
         .venue-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 15px;
+            gap: 20px;
         }
         .venue-card {
-            height: 380px;
-            border-radius: 8px;
+            height: 350px;
+            border-radius: 12px;
             overflow: hidden;
             position: relative;
             text-decoration: none;
@@ -77,7 +74,7 @@
             transition: 0.4s;
             border: 1px solid #222;
         }
-        .venue-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .venue-card:hover { transform: translateY(-10px); border-color: var(--gold); }
         .venue-overlay {
             position: absolute;
             bottom: 0;
@@ -86,147 +83,151 @@
             background: linear-gradient(transparent, rgba(0,0,0,0.95));
             color: white;
             box-sizing: border-box;
+            text-align: left;
         }
 
-        /* --- Custom Form Styling --- */
-        .form-wrap { background: #000; border-top: 1px solid #222; }
+        /* Sleek Form */
         .custom-form {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 40px auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 10px;
             border: 1px solid #333;
         }
-        .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .custom-form input, .custom-form select {
-            background: var(--input-bg);
+            background: #1a1a1a;
             border: 1px solid #444;
             color: white;
             padding: 15px;
-            border-radius: 5px;
-            font-size: 1rem;
-            outline: none;
+            border-radius: 8px;
         }
-        .custom-form input:focus { border-color: var(--gold); }
-
-        /* --- Buttons --- */
-        .btn {
+        .submit-btn {
             background: var(--gold);
-            color: #000;
-            padding: 15px 25px;
-            text-decoration: none;
+            color: black;
+            padding: 18px;
             font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 4px;
-            display: inline-block;
-            text-align: center;
-            transition: 0.3s;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
+            text-transform: uppercase;
         }
-        .btn:hover { background: #fff; }
-        .btn-red { background: var(--bnl-red); color: white; }
 
-        @media (max-width: 768px) {
-            .event-card { flex-direction: column; }
-            .event-img { width: 100%; height: 250px; }
-            .input-group { grid-template-columns: 1fr; }
-        }
+
+        .floating-ig {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    z-index: 1000; /* Keeps it above everything else */
+    transition: transform 0.3s ease;
+}
+
+.floating-ig img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.floating-ig:hover {
+    transform: scale(1.1);
+}
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Boston Nightlife</h1>
-        <p>Guest List • VIP • Tickets</p>
-        <a href="#guestlist" class="btn">Join Guest List</a>
+        <img src="img/sidedoor.jpeg" alt="sidedoor boston Logo" class="main-logo">
+    
     </header>
 
-    <section id="special-events">
-        <h2>Special Events</h2>
-        <div id="event-list" class="event-container">
-            <p style="text-align:center; opacity:0.5;">Loading headliners...</p>
+    <section>
+        <div class="top-nav">
+            <a href="events.html" class="btn-events">View Ticketed Events & Headliners →</a>
         </div>
-    </section>
 
-    <section id="venues">
-        <h2>Our Partner Venues</h2>
+        <h2>Partner Venues</h2>
         <div class="venue-grid">
-            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=500&q=80');">
-                <div class="venue-overlay"><h3>BSMNT</h3><p>Underground Energy</p></div>
+            <a href="#guestlist" class="venue-card" style="background-image: url('img/bsmnt.jpeg');">
+                <div class="venue-overlay"><h3>BSMNT</h3></div>
             </a>
-            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb1?auto=format&fit=crop&w=500&q=80');">
-                <div class="venue-overlay"><h3>The Grand</h3><p>Premier Nightlife</p></div>
+            <a href="#guestlist" class="venue-card" style="background-image: url('img/grand.jpeg');">
+                <div class="venue-overlay"><h3>The Grand</h3></div>
             </a>
-            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&w=500&q=80');">
-                <div class="venue-overlay"><h3>Mémoire</h3><p>Encore Harbor</p></div>
+            <a href="#guestlist" class="venue-card" style="background-image: url('img/Mèmoire.jpeg');">
+                <div class="venue-overlay"><h3>Mémoire</h3></div>
             </a>
-            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1514525253361-bee8718a74a2?auto=format&fit=crop&w=500&q=80');">
-                <div class="venue-overlay"><h3>Big Night Live</h3><p>Concerts & VIP</p></div>
+            <a href="#guestlist" class="venue-card" style="background-image: url('img/bignight.jpeg');">
+                <div class="venue-overlay"><h3>Big Night Live</h3></div>
+            </a>
+            <a href="#guestlist" class="venue-card" style="background-image: url('img/scorpion.jpeg');">
+                <div class="venue-overlay"><h3>Scorpion</h3></div>
             </a>
         </div>
     </section>
 
-    <section id="guestlist" class="form-wrap">
-        <h2>Sign Up for Guest List</h2>
-        <form name="guestlist" method="POST" data-netlify="true" class="custom-form">
-            <div class="input-group">
-                <input type="text" name="name" placeholder="Full Name" required>
-                <input type="tel" name="phone" placeholder="Phone Number" required>
+
+    <section class="info-section">
+    <div class="mission-box">
+        <h2>About Us</h2>
+        <p>SideDoor is your key to Boston's Most exclusive nightlife. Our mission is simple: create a premium club experience tailored to your style. Through our elite partnerships we provide a 'Side Door' into the cities top venues, guaranteeing you seamless entry, no cover, and an experience you wont forget. </p>
+    </div>
+
+    <div class="steps-container">
+        <h2>How It Works</h2>
+        <div class="steps-grid">
+            <div class="step">
+                <span class="step-num"></span>
+                <h3>Sign Up</h3>
+                <p>Fill out our Guest list form by selecting your venue, the event, how many guests you are bringing, and whether or not you are getting a table. 
+                    Be sure to submit before 11pm on the night of the event. 
+
+
+                </p>
             </div>
-            <input type="email" name="email" placeholder="Email Address" required>
+            <div class="step">
+                <span class="step-num">2</span>
+                <h3>Confirmation</h3>
+                <p>You'll receive a confirmation text or email with arrival instructions.</p>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <h3>Arrival</h3>
+                <p>Head to the front of the line, mention our list, and enjoy the night.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<a href="https://instagram.com/sidedoorsbos" class="floating-ig" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+</a>
+
+
+
+
+    <section id="guestlist" style="background: #000;">
+        <h2>Join Guest List</h2>
+        <form name="guestlist" method="POST" data-netlify="true" class="custom-form">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="tel" name="phone" placeholder="Phone Number" required>
             <select name="venue" required>
                 <option value="" disabled selected>Select Venue</option>
                 <option value="BSMNT">BSMNT</option>
                 <option value="The Grand">The Grand</option>
                 <option value="Memoire">Mémoire</option>
                 <option value="Big Night Live">Big Night Live</option>
-                <option value="Scorpion">Scorpion Boston</option>
+                <option value="Scorpion">Scorpion</option>
             </select>
-            <input type="number" name="count" placeholder="Total People in Group" min="1" required>
-            <button type="submit" class="btn">Confirm My Spot</button>
+            <input type="number" name="count" placeholder="Group Size" min="1" required>
+            <button type="submit" class="submit-btn">Submit Guest List</button>
         </form>
     </section>
 
-    <script>
-        // 1. PASTE YOUR PUBLISHED CSV URL HERE
-        const CSV_URL = "YOUR_PUBLISHED_CSV_LINK_HERE"; 
-
-        async function fetchEvents() {
-            try {
-                const res = await fetch(CSV_URL);
-                const text = await res.text();
-                const lines = text.split('\n').slice(1);
-                const list = document.getElementById('event-list');
-                
-                if (lines.length > 0 && lines[0].trim() !== "") {
-                    list.innerHTML = "";
-                    lines.forEach(line => {
-                        const [name, date, img, link] = line.split(',');
-                        if (name) {
-                            list.innerHTML += `
-                                <div class="event-card">
-                                    <div class="event-img" style="background-image: url('${img.trim()}')"></div>
-                                    <div class="event-details">
-                                        <h3>${name}</h3>
-                                        <p>${date}</p>
-                                        <a href="${link.trim()}" class="btn btn-red" target="_blank">Buy Tickets</a>
-                                    </div>
-                                </div>`;
-                        }
-                    });
-                } else {
-                    list.innerHTML = "<p>No special events this week. Join the guest list below!</p>";
-                }
-            } catch (err) {
-                console.log("Sheet not found or link is private.");
-            }
-        }
-        fetchEvents();
-    </script>
 </body>
 </html>
