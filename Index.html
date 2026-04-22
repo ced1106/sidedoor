@@ -3,32 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Club Promo Service</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Boston Nightlife | Guest List & Tickets</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --bnl-red: #ff3e3e; /* Big Night Live Brand Color */
+            --dark-bg: #050505;
+            --card-bg: #111;
+            --input-bg: #1a1a1a;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Header / Hero --- */
+        header {
+            height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
+                        url('https://images.unsplash.com/photo-1514525253361-bee8718a74a2?auto=format&fit=crop&w=1500&q=80');
+            background-size: cover;
+            background-position: center;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        header h1 { font-size: 3rem; margin: 0; letter-spacing: 4px; text-transform: uppercase; }
+        header p { font-size: 1.1rem; color: var(--gold); margin-top: 10px; }
+
+        section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; }
+        h2 { text-align: center; font-size: 2.2rem; text-transform: uppercase; margin-bottom: 40px; letter-spacing: 2px; }
+
+        /* --- Featured Events (Spreadsheet) --- */
+        .event-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .event-card {
+            display: flex;
+            width: 100%;
+            max-width: 850px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+        .event-card:hover { border-color: var(--bnl-red); }
+        .event-img { width: 300px; background-size: cover; background-position: center; min-height: 250px; }
+        .event-details { padding: 30px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .event-details h3 { margin: 0; font-size: 1.8rem; text-transform: uppercase; }
+        .event-details p { color: #aaa; margin: 10px 0; }
+
+        /* --- Venue Grid --- */
+        .venue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+        }
+        .venue-card {
+            height: 380px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            text-decoration: none;
+            background-size: cover;
+            background-position: center;
+            transition: 0.4s;
+            border: 1px solid #222;
+        }
+        .venue-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .venue-overlay {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
+            color: white;
+            box-sizing: border-box;
+        }
+
+        /* --- Custom Form Styling --- */
+        .form-wrap { background: #000; border-top: 1px solid #222; }
+        .custom-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .custom-form input, .custom-form select {
+            background: var(--input-bg);
+            border: 1px solid #444;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .custom-form input:focus { border-color: var(--gold); }
+
+        /* --- Buttons --- */
+        .btn {
+            background: var(--gold);
+            color: #000;
+            padding: 15px 25px;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+            display: inline-block;
+            text-align: center;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover { background: #fff; }
+        .btn-red { background: var(--bnl-red); color: white; }
+
+        @media (max-width: 768px) {
+            .event-card { flex-direction: column; }
+            .event-img { width: 100%; height: 250px; }
+            .input-group { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
 
-    <header class="hero">
-        <h1>Experience the Night</h1>
-        <a href="#signup" class="btn">Join Guest List</a>
+    <header>
+        <h1>Boston Nightlife</h1>
+        <p>Guest List • VIP • Tickets</p>
+        <a href="#guestlist" class="btn">Join Guest List</a>
     </header>
 
-    <section class="venues">
-        <h2>Our Venues</h2>
+    <section id="special-events">
+        <h2>Special Events</h2>
+        <div id="event-list" class="event-container">
+            <p style="text-align:center; opacity:0.5;">Loading headliners...</p>
+        </div>
+    </section>
+
+    <section id="venues">
+        <h2>Our Partner Venues</h2>
         <div class="venue-grid">
-            <a href="#signup" class="venue-card" style="background-image: url('club1.jpg');">
-                <span>The Grand</span>
+            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=500&q=80');">
+                <div class="venue-overlay"><h3>BSMNT</h3><p>Underground Energy</p></div>
             </a>
-            <a href="#signup" class="venue-card" style="background-image: url('club2.jpg');">
-                <span>Icon Nightclub</span>
+            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb1?auto=format&fit=crop&w=500&q=80');">
+                <div class="venue-overlay"><h3>The Grand</h3><p>Premier Nightlife</p></div>
             </a>
+            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&w=500&q=80');">
+                <div class="venue-overlay"><h3>Mémoire</h3><p>Encore Harbor</p></div>
+            </a>
+            <a href="#guestlist" class="venue-card" style="background-image: url('https://images.unsplash.com/photo-1514525253361-bee8718a74a2?auto=format&fit=crop&w=500&q=80');">
+                <div class="venue-overlay"><h3>Big Night Live</h3><p>Concerts & VIP</p></div>
+            </a>
+        </div>
+    </section>
+
+    <section id="guestlist" class="form-wrap">
+        <h2>Sign Up for Guest List</h2>
+        <form name="guestlist" method="POST" data-netlify="true" class="custom-form">
+            <div class="input-group">
+                <input type="text" name="name" placeholder="Full Name" required>
+                <input type="tel" name="phone" placeholder="Phone Number" required>
             </div>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <select name="venue" required>
+                <option value="" disabled selected>Select Venue</option>
+                <option value="BSMNT">BSMNT</option>
+                <option value="The Grand">The Grand</option>
+                <option value="Memoire">Mémoire</option>
+                <option value="Big Night Live">Big Night Live</option>
+                <option value="Scorpion">Scorpion Boston</option>
+            </select>
+            <input type="number" name="count" placeholder="Total People in Group" min="1" required>
+            <button type="submit" class="btn">Confirm My Spot</button>
+        </form>
     </section>
 
-    <section id="signup" class="form-container">
-        <h2>Sign Up for the Guest List</h2>
-        <iframe src="YOUR_GOOGLE_FORM_URL" width="100%" height="800" frameborder="0">Loading…</iframe>
-    </section>
+    <script>
+        // 1. PASTE YOUR PUBLISHED CSV URL HERE
+        const CSV_URL = "YOUR_PUBLISHED_CSV_LINK_HERE"; 
 
+        async function fetchEvents() {
+            try {
+                const res = await fetch(CSV_URL);
+                const text = await res.text();
+                const lines = text.split('\n').slice(1);
+                const list = document.getElementById('event-list');
+                
+                if (lines.length > 0 && lines[0].trim() !== "") {
+                    list.innerHTML = "";
+                    lines.forEach(line => {
+                        const [name, date, img, link] = line.split(',');
+                        if (name) {
+                            list.innerHTML += `
+                                <div class="event-card">
+                                    <div class="event-img" style="background-image: url('${img.trim()}')"></div>
+                                    <div class="event-details">
+                                        <h3>${name}</h3>
+                                        <p>${date}</p>
+                                        <a href="${link.trim()}" class="btn btn-red" target="_blank">Buy Tickets</a>
+                                    </div>
+                                </div>`;
+                        }
+                    });
+                } else {
+                    list.innerHTML = "<p>No special events this week. Join the guest list below!</p>";
+                }
+            } catch (err) {
+                console.log("Sheet not found or link is private.");
+            }
+        }
+        fetchEvents();
+    </script>
 </body>
 </html>
