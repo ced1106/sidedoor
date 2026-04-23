@@ -30,24 +30,26 @@
 }
 
 
-        .main-logo {
-            max-width: 300px;
-            height: auto;
-            margin-bottom: 10px;
-            
-        }
+       header {
+    height: auto;
+    padding:   0; /* Only top padding, no bottom padding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #000; /* Match the logo's black exactly */
+    border-bottom: 2px solid var(--gold);
+    overflow: hidden;
+}
 
-        header {
-            height: 40vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)); /*WHAT IS HERO? */
-            background-size: cover;
-            background-position: center;
-            border-bottom: 2px solid var(--gold);
-        }
+.main-logo {
+    width: 120%;
+    max-width: 900px; 
+    height: 250px;       /* Force a shorter height */
+    object-fit: cover;   /* This 'crops' the black bars off the top/bottom of your JPG */
+    object-position: center 55%; 
+    display: block;
+    margin-bottom: -10px; /* Pulls the gold line up into the image space */
+}
 
         section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; text-align: center; }
         
@@ -126,91 +128,7 @@
         }
 
 
-       /* .floating-ig {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    z-index: 1000; /* Keeps it above everything else */
-    /*transition: transform 0.3s ease;
-/*}*/
-
-/*.floating-ig img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-.floating-ig:hover {
-    transform: scale(1.1);
-}
-
-.social-float-wrap {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    display: flex;
-    flex-direction: row; /* Stacks them vertically */
-    /*gap: 15px;
-    z-index: 9999;
-}
-
-.floating-social {
-    width:55px;
-    height: 55px;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.floating-social img {
-    width: 100%;
-    height: auto;
-    border-radius: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-}
-
-.floating-social:hover {
-    transform: scale(1.15) translateY(-5px);
-}
-
-
-.wa img {
-    background: #25D366;
-    /*padding: 10px;
-    box-sizing: border-box;*/
-
-   /* width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-
-.whatsapp-text {
-    margin-top: 20px;
-    font-size: 0.9rem;
-    color: #888;
-}
-
-.whatsapp-text a {
-    color: var(--gold);
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.whatsapp-text a:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 600px) {
-    .floating-social { width: 45px; height: 45px; }
-    .social-float-wrap { bottom: 20px; right: 20px; gap: 10px; }
-}*/
-
+      
 
 .social-float-wrap {
     position: fixed;
