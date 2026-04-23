@@ -519,7 +519,7 @@ document.getElementById('side-door-form').addEventListener('submit', function(e)
         `;
     }
 }*/ 
-
+async function pullEventsFromForm() {
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSelPNPyzNUoQLui_9OQjb5_Lz5yclV0YgyoqO_qqbYUTpTpDg/viewform";
     const select = document.getElementById('event-select');
     const TARGET_ID = "1386961262"; // Your Event Question ID 
@@ -583,7 +583,7 @@ const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSelPNPyzNUoQLui_9OQjb
             select.appendChild(opt);
         });
     }
-
+}
 pullEventsFromForm();
 </script>
 </html>
