@@ -454,7 +454,7 @@ document.getElementById('side-door-form').addEventListener('submit', function(e)
 
 
 <script>
-async function pullEventsFromForm() {
+/*async function pullEventsFromForm() {
     const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSelPNPyzNUoQLui_9OQjb5_Lz5yclV0YgyoqO_qqbYUTpTpDg/viewform";
     const select = document.getElementById('event-select');
     const TARGET_ID = "1386961262"; // The internal ID for your event choices
@@ -518,7 +518,72 @@ async function pullEventsFromForm() {
             <option value="General Guest List">General Guest List</option>
         `;
     }
-}
+}*/ 
+
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSelPNPyzNUoQLui_9OQjb5_Lz5yclV0YgyoqO_qqbYUTpTpDg/viewform";
+    const select = document.getElementById('event-select');
+    const TARGET_ID = "1386961262"; // Your Event Question ID 
+
+    try {
+        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(FORM_URL)}&v=${Date.now()}`);
+        if (!response.ok) throw new Error('Proxy unreachable');
+        const html = await response.text();
+        
+        // 1. Isolate the data block
+        const startMarker = 'FB_PUBLIC_LOAD_DATA_ = ';
+        const dataPart = html.split(startMarker)[1];
+        if (!dataPart) throw new Error('Could not find data block');
+        
+        const fullJsonString = dataPart.split(';')[0];
+        
+        // 2. Instead of parsing the whole giant object, 
+        // we split the string by the Question ID to find the nearby choices
+        const parts = fullJsonString.split(TARGET_ID);
+        if (parts.length < 2) throw new Error('Question ID not found in form');
+
+        // The choices follow the ID in a specific pattern: "Choice Name",null,null,null,0
+        // This regex looks for text inside quotes followed by Google's choice metadata
+        const choiceRegex = /"([^"]+)",null,null,null,0/g;
+        let choices = [];
+        let m;
+        
+        // Search in the segment immediately after the Target ID
+        while ((m = choiceRegex.exec(parts[1])) !== null) {
+            choices.push(m[1]);
+        }
+
+        if (choices.length > 0) {
+            select.innerHTML = '<option value="" disabled selected>Select Event</option>';
+            // Clean and add to dropdown
+            [...new Set(choices)].forEach(event => {
+                const opt = document.createElement('option');
+                opt.value = event;
+                opt.textContent = event.replace(/\\u0026/g, '&'); // Fix ampersands
+                select.appendChild(opt);
+            });
+            console.log("Successfully synced events.");
+        } else {
+            throw new Error("Regex found no matches");
+        }
+    } catch (err) {
+        console.error("Scraper Error:", err);
+        // Custom Fallback: Hardcoded based on your latest successful responses 
+        const fallbacks = [
+            "The Grand - Waka Flaka (Saturday 4/25)",
+            "bsmnt - Jake Shore (Saturday 4/25)",
+            "Mémoire - Costa (Saturday 4/25)",
+            "Scorpion Bar Boston - Don Daft (Saturday 4/25)",
+            "General Guest List"
+        ];
+        select.innerHTML = '<option value="" disabled selected>Select Event</option>';
+        fallbacks.forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f;
+            opt.textContent = f;
+            select.appendChild(opt);
+        });
+    }
+
 pullEventsFromForm();
 </script>
 </html>
