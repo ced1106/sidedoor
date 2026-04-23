@@ -394,20 +394,20 @@
                 <span class="step-num"></span>
                 <h3>Sign Up</h3>
                 <p>Fill out our Guest list form by selecting your venue, the event, how many guests you are bringing, and whether or not you are getting a table. 
-                    Be sure to submit before 11pm on the night of the event. 
+                    Be sure to submit before 9:30pm on the night of the event. 
 
 
                 </p>
             </div>
             <div class="step">
-                <span class="step-num">2</span>
+                
                 <h3>Confirmation</h3>
                 <p>You'll receive a confirmation text or email with arrival instructions.</p>
             </div>
             <div class="step">
-                <span class="step-num">3</span>
+                
                 <h3>Arrival</h3>
-                <p>Head to the front of the line, mention our list, and enjoy the night.</p>
+                <p>Head to the door, mention your name and our list, and enjoy the night.</p>
             </div>
         </div>
     </div>
@@ -523,11 +523,10 @@ document.getElementById('side-door-form').addEventListener('submit', function(e)
     }
 }*/ 
 async function pullEventsFromForm() {
-    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSelPNPyzNUoQLui_9OQjb5_Lz5yclV0YgyoqO_qqbYUTpTpDg/viewform";
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRcjUz5xeAVjrBvG0pSX1izxKli5GzdpJnONDNAF9WIvsuXdRGtsisU308KK-gZVujQWUahRbjGK3kU/pub?gid=1367351223&single=true&output=csv";
     const select = document.getElementById('event-select');
-    const TARGET_ID = "1386961262"; 
 
-    // Step 1: Pre-fill with the fallback immediately so the user never sees "Loading"
+    // 1. Instant Fallback (No loading screen)
     const fallbacks = [
         "The Grand - Waka Flaka (Saturday 4/25)",
         "bsmnt - Jake Shore (Saturday 4/25)",
@@ -535,49 +534,40 @@ async function pullEventsFromForm() {
         "Scorpion Bar Boston - Don Daft (Saturday 4/25)",
         "General Guest List"
     ];
-    
-    const renderChoices = (list) => {
+
+    const render = (list) => {
         select.innerHTML = '<option value="" disabled selected>Select Event</option>';
         [...new Set(list)].forEach(event => {
-            const opt = document.createElement('option');
-            opt.value = event;
-            opt.textContent = event.replace(/\\u0026/g, '&').replace(/\\u0027/g, "'"); 
-            select.appendChild(opt);
+            const cleanEvent = event.trim().replace(/^"|"$/g, ''); // Clean quotes
+            if (cleanEvent.length > 0) {
+                const opt = document.createElement('option');
+                opt.value = cleanEvent;
+                opt.textContent = cleanEvent;
+                select.appendChild(opt);
+            }
         });
     };
 
-    renderChoices(fallbacks); // Default list loads instantly
+    render(fallbacks); // Show backup immediately
 
     try {
-        // Step 2: Try to sync with the live form using a more reliable proxy
-        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(FORM_URL)}`);
+        // 2. Fetch from Google (No proxy needed for CSVs!)
+        const response = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
+        if (!response.ok) throw new Error('Sheet unreachable');
         
-        if (!response.ok) throw new Error('CORS Proxy Error');
-        const html = await response.text();
+        const data = await response.text();
+        // Split by lines and remove the header row (A1)
+        const rows = data.split(/\r?\n/).slice(1); 
         
-        const dataPart = html.split('FB_PUBLIC_LOAD_DATA_ = ')[1];
-        if (!dataPart) return; // Silent fail, keep fallbacks
-        
-        const fullJsonString = dataPart.split(';')[0];
-        const parts = fullJsonString.split(TARGET_ID);
-        if (parts.length < 2) return;
-
-        const choiceRegex = /"([^"]+)",null,null,null,0/g;
-        let liveChoices = [];
-        let m;
-        
-        while ((m = choiceRegex.exec(parts[1])) !== null) {
-            liveChoices.push(m[1]);
-        }
-
-        if (liveChoices.length > 0) {
-            renderChoices(liveChoices); // Overwrite fallbacks with live data
-            console.log("Side Doors: Live Events Synced.");
+        if (rows.length > 0 && rows[0] !== "") {
+            render(rows);
+            console.log("Side Doors: Events Synced from Sheet.");
         }
     } catch (err) {
-        console.warn("Side Doors: Using local fallback list due to CORS/Network error.");
+        console.warn("Side Doors: Using fallbacks. Check your Sheet Publish settings.");
     }
 }
+
 
 pullEventsFromForm();
 </script>
