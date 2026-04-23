@@ -20,6 +20,15 @@
             scroll-behavior: smooth;
         }
 
+        .form-frame {
+    max-width: 700px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden; 
+    border: 2px solid var(--gold);
+    background: #fff; 
+}
+
 
         .main-logo {
             max-width: 300px;
@@ -350,22 +359,50 @@
 
 
 
-    <section id="guestlist" style="background: #000;">
+    <section id="guestlist" class="form-container"">
         <h2>Join Guest List</h2>
-        <form name="guestlist" method="POST" data-netlify="true" class="custom-form">
-            <input type="text" name="name" placeholder="Full Name" required>
-            <input type="tel" name="phone" placeholder="Phone Number" required>
-            <select name="venue" required>
-                <option value="" disabled selected>Select Venue</option>
-                <option value="BSMNT">BSMNT</option>
-                <option value="The Grand">The Grand</option>
-                <option value="Memoire">Mémoire</option>
-                <option value="Big Night Live">Big Night Live</option>
-                <option value="Scorpion">Scorpion</option>
+        <p>Once inquiry is reviewed, you will receive confirmation.</p>
+    
+    <form id="side-door-form" class="custom-form">
+        <input type="text" id="name" placeholder="Full Name (Check-in Name)" required>
+        
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+
+        <input type="email" id="email" placeholder="Email Address" required>
+        
+        <select id="prior-entry" required>
+            <option value="" disabled selected>Can you attend prior to 10:45 PM?</option>
+            <option value="Yes,  I'll be there">Yes,  I'll be there</option>
+            <option value="Sorry, can't make it">Sorry, can't make it</option>
+        </select>
+
+        <select id="event-select" required>
+            <option value="" disabled selected>Loading available events...</option>
+        </select>
+
+        <div class="input-group">
+            <input type="number" id="count" placeholder="Amount of Guests" min="1" required>
+            
+            <select id="table-inquiry" required>
+                <option value="" disabled selected>Are you getting a table?</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
             </select>
-            <input type="number" name="count" placeholder="Group Size" min="1" required>
-            <button type="submit" class="submit-btn">Submit Guest List</button>
-        </form>
+        </div>
+
+        <select id="referral">
+            <option value="" disabled selected>How did you hear about us?</option>
+            <option value="Website">Website</option>
+            <option value="Friend">Friend</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Advertisement">Advertisement</option>
+        </select>
+
+        <textarea id="comments" placeholder="Comments and/or questions"></textarea>
+        
+        <button type="submit" class="submit-btn">Submit Inquiry</button>
+        <p id="form-status" style="margin-top:15px; display:none; color:var(--gold); font-weight:bold;"></p>
+    </form>
     </section>
 
 
@@ -377,4 +414,104 @@
 </p>
 
 </body>
+
+
+<script>
+document.getElementById('side-door-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const status = document.getElementById('form-status');
+    status.style.display = "block";
+    status.innerText = "Securing your spot...";
+
+    // This matches the action URL from your Google Form source
+    const G_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSelPNPyzNUoQLui_9OQjb5_Lz5yclV0YgyoqO_qqbYUTpTpDg/formResponse";
+
+    // Mapping Entry IDs found in source code
+    const formData = new URLSearchParams();
+    formData.append("entry.103123503", document.getElementById('name').value);
+    formData.append("entry.877086558", document.getElementById('prior-entry').value);
+    formData.append("entry.811851362", document.getElementById('count').value);
+    formData.append("entry.384797717", document.getElementById('phone').value);
+    formData.append("entry.1386961262", document.getElementById('event-select').value);
+    formData.append("entry.751557827", document.getElementById('email').value);
+    formData.append("entry.1424661284", document.getElementById('referral').value);
+    formData.append("entry.1320826913", document.getElementById('table-inquiry').value);
+    formData.append("entry.2606285", document.getElementById('comments').value);
+
+    fetch(G_FORM_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Essential for Google Form bypass
+        body: formData
+    }).then(() => {
+        status.innerText = "Confirmation Sent! Check your text/email soon.";
+        document.getElementById('side-door-form').reset();
+    }).catch(() => {
+        status.innerText = "Error. Please DM us on Instagram @sidedoorsbos";
+    });
+});
+</script>
+
+
+
+<script>
+async function pullEventsFromForm() {
+    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSelPNPyzNUoQLui_9OQjb5_Lz5yclV0YgyoqO_qqbYUTpTpDg/viewform";
+    const select = document.getElementById('event-select');
+
+    try {
+        // Adding a cache-buster to the proxy request
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(FORM_URL)}&t=${Date.now()}`;
+        const response = await fetch(proxyUrl);
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        const scripts = doc.querySelectorAll('script');
+        
+        let choices = [];
+
+        scripts.forEach(script => {
+            if (script.innerText.includes('FB_PUBLIC_LOAD_DATA_')) {
+                // Targeted regex for your specific Event Question ID
+                const match = script.innerText.match(/2055373147,.*?,.*?,.*?,.*?\[\[1386961262,\[(.*?)\]/);
+                
+                if (match) {
+                    const rawChoices = match[1];
+                    const names = rawChoices.match(/"([^"]+)"/g);
+                    if (names) {
+                        choices = names
+                            .map(n => n.replace(/"/g, ''))
+                            .filter(n => n.length > 5 && !n.startsWith('entry.'));
+                    }
+                }
+            }
+        });
+
+        if (choices.length > 0) {
+            select.innerHTML = '<option value="" disabled selected>Select Event</option>';
+            // Set ensures no duplicate names appear
+            [...new Set(choices)].forEach(event => {
+                const opt = document.createElement('option');
+                opt.value = event;
+                opt.textContent = event;
+                select.appendChild(opt);
+            });
+        } else {
+            throw new Error("No events found in source");
+        }
+    } catch (err) {
+        console.error("Sync failed:", err);
+        // Fallback options so the user can still submit a general inquiry
+        select.innerHTML = `
+            <option value="" disabled selected>Select Event</option>
+            <option value="General Guest List">General Guest List</option>
+            <option value="Table Inquiry">Table Inquiry</option>
+        `;
+    }
+}
+
+pullEventsFromForm();
+</script>
 </html>
